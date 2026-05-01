@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations Dashboard Hub | Aviation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0B1E3C;
+            --sky: #3BAFDA;
+            --white: #FFFFFF;
+            --gray: #F5F7FA;
+            --gray-text: #AAB8C2;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--navy);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Aviation Background Elements */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 50% 30%, rgba(59, 175, 218, 0.1) 0%, transparent 70%),
+                linear-gradient(rgba(11, 30, 60, 0.8), rgba(11, 30, 60, 0.8)),
+                repeating-linear-gradient(transparent, transparent 49%, rgba(59, 175, 218, 0.05) 50%, transparent 51%);
+            background-size: 100% 100%, 100% 100%, 100% 40px;
+            z-index: -1;
+        }
+
+        .horizon-line {
+            position: fixed;
+            top: 40%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 175, 218, 0.2), transparent);
+            z-index: -1;
+        }
+
+        .runway-mask {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: linear-gradient(to top, rgba(59, 175, 218, 0.05), transparent);
+            clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 80px 24px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        header {
+            margin-bottom: 64px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--sky);
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 32px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover, .card:focus-visible {
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(59, 175, 218, 0.08);
+            border-color: var(--sky);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(59, 175, 218, 0.3);
+            outline: 2px solid var(--sky);
+            outline-offset: 4px;
+        }
+
+        .card:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        /* Tooltip Styles */
+        .card {
+            position: relative;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--navy);
+            border: 1px solid var(--sky);
+            padding: 12px;
+            border-radius: 8px;
+            width: 200px;
+            font-size: 0.8rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 10;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 16px;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px;
+            border-style: solid;
+            border-color: var(--sky) transparent transparent transparent;
+        }
+
+        .card:hover .tooltip, .card:focus-visible .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 24px;
+            color: var(--sky);
+            transition: var(--transition);
+        }
+
+        .card:hover .card-icon, .card:focus-visible .card-icon {
+            transform: scale(1.1);
+            color: var(--white);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            font-size: 0.93rem;
+            color: var(--gray-text);
+            line-height: 1.5;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 40px 24px;
+            color: var(--gray-text);
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Aircraft Animations */
+        .aircraft {
+            position: fixed;
+            pointer-events: none;
+            color: var(--sky);
+            opacity: 0.4;
+            z-index: 0;
+            width: 38px;
+            height: 38px;
+            filter: drop-shadow(0 0 5px var(--sky));
+        }
+
+        .aircraft-flyer {
+            top: 15%;
+            left: -100px;
+            animation: fly-across 35s linear infinite;
+        }
+
+        .aircraft-lander {
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            animation: landing 25s ease-in infinite;
+            color: #FFFFFF;
+        }
+
+        @keyframes fly-across {
+            0% { left: -100px; transform: rotate(90deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { left: 110%; transform: rotate(90deg) scale(1); opacity: 0; }
+        }
+
+        @keyframes landing {
+            0% { top: -100px; transform: translateX(-50%) rotate(180deg) scale(1.2); opacity: 0; }
+            10% { opacity: 0.3; }
+            100% { top: 45%; transform: translateX(-50%) rotate(180deg) scale(0.05); opacity: 0; }
+        }
+
+        /* Subtle Background Elements */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: transparent;
+            z-index: -2;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .cloud {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50px;
+            filter: blur(40px);
+            pointer-events: none;
+            z-index: -1;
+            animation: drift var(--duration) linear infinite;
+        }
+
+        @keyframes drift {
+            from { left: -200px; }
+            to { left: 120%; }
+        }
+
+        /* Runway Lights */
+        .runway-lights {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .light {
+            width: 6px;
+            height: 6px;
+            background-color: var(--sky);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--sky), 0 0 20px var(--sky);
+            animation: pulse-light 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-light {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 15px var(--sky), 0 0 30px var(--sky); }
+        }
+
+        /* Flight Path Visualization */
+        .flight-path-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            opacity: 0.2;
+        }
+
+        .path-line {
+            fill: none;
+            stroke: var(--sky);
+            stroke-width: 1;
+            stroke-dasharray: 5 15;
+            animation: path-flow 10s linear infinite;
+        }
+
+        @keyframes path-flow {
+            from { stroke-dashoffset: 200; }
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 48px 20px;
+            }
+            h1 {
+                font-size: 1.75rem;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="horizon-line"></div>
+    <div class="runway-mask"></div>
+
+    <!-- Background Elements -->
+    <div class="stars">
+        <div class="star" style="top: 10%; left: 20%; width: 2px; height: 2px; --duration: 3s;"></div>
+        <div class="star" style="top: 30%; left: 80%; width: 1px; height: 1px; --duration: 4s;"></div>
+        <div class="star" style="top: 70%; left: 40%; width: 2px; height: 2px; --duration: 5s;"></div>
+        <div class="star" style="top: 50%; left: 10%; width: 1px; height: 1px; --duration: 3.5s;"></div>
+        <div class="star" style="top: 85%; left: 90%; width: 2px; height: 2px; --duration: 6s;"></div>
+    </div>
+    <div class="cloud" style="top: 20%; width: 300px; height: 100px; --duration: 60s;"></div>
+    <div class="cloud" style="top: 60%; width: 400px; height: 120px; --duration: 80s;"></div>
+
+    <!-- Flight Path Visualization -->
+    <div class="flight-path-container">
+        <svg width="100%" height="100%" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+            <!-- Horizontal transit path matching aircraft-flyer -->
+            <path class="path-line" d="M -50,150 Q 500,50 1050,150" />
+            <!-- Vertical landing trajectory matching aircraft-lander -->
+            <path class="path-line" d="M 500,-50 Q 520,200 500,450" />
+        </svg>
+    </div>
+
+    <!-- Runway Lights -->
+    <div class="runway-lights">
+        <div class="light" style="animation-delay: 0s;"></div>
+        <div class="light" style="animation-delay: 0.2s;"></div>
+        <div class="light" style="animation-delay: 0.4s;"></div>
+        <div class="light" style="animation-delay: 0.6s;"></div>
+        <div class="light" style="animation-delay: 0.8s;"></div>
+        <div class="light" style="animation-delay: 1.0s;"></div>
+    </div>
+
+    <!-- Animated Aircraft -->
+    <svg class="aircraft aircraft-flyer" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-1.1.1-1.5.5l-.3.3c-.4.4-.5 1-.1 1.5L9 12l-1.5 1.5L4 13l-1 1 3 2 2 3 1-1-1.5-3.5L9 13l3.5 3.5 1.5 5.5c.5.4 1.1.3 1.5-.1l.3-.3c.4-.4.5-1.1.1-1.5z"/>
+    </svg>
+    <svg class="aircraft aircraft-lander" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21,12L19,10L14,10L10,4H8L12,10H6L4,8H2V16H4L6,14H12L8,20H10L14,14L19,14L21,12Z"/>
+    </svg>
+
+    <div class="container">
+        <header>
+            <h1>Operations Dashboard Hub</h1>
+            <p class="subtitle">Flight Monitoring & Tools</p>
+        </header>
+
+        <main class="grid">
+            <a href="https://us-bangla.vercel.app/" target="_blank" rel="noopener noreferrer" class="card">
+                <div class="tooltip">Open Flight Dashboard <br> (Tracking live operations)</div>
+                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-1.1.1-1.5.5l-.3.3c-.4.4-.5 1-.1 1.5L9 12l-1.5 1.5L4 13l-1 1 3 2 2 3 1-1-1.5-3.5L9 13l3.5 3.5 1.5 5.5c.5.4 1.1.3 1.5-.1l.3-.3c.4-.4.5-1 .1-1.5z"/>
+                </svg>
+                <div class="card-title">Flight Dashboard</div>
+                <div class="card-description">Real-time tracking of active fleet operations and arrival schedules.</div>
+            </a>
+
+            <a href="https://kpi-eosin.vercel.app/" target="_blank" rel="noopener noreferrer" class="card">
+                <div class="tooltip">Staff Performance <br> (Efficiency & Rotations)</div>
+                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <div class="card-title">Staff Performance Tracker</div>
+                <div class="card-description">Monitor efficiency metrics and crew assignment rotations across terminals.</div>
+            </a>
+
+            <a href="https://example.com/automation" target="_blank" rel="noopener noreferrer" class="card">
+                <div class="tooltip">Automation Panel <br> (Ground Handling)</div>
+                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <div class="card-title">Automation Panel</div>
+                <div class="card-description">Configure automated ground handling triggers and sensor notifications.</div>
+            </a>
+
+            <a href="https://example.com/reports" target="_blank" rel="noopener noreferrer" class="card">
+                <div class="tooltip">Reports System <br> (Data Logs & Summaries)</div>
+                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <line x1="10" y1="9" x2="8" y2="9"/>
+                </svg>
+                <div class="card-title">Reports System</div>
+                <div class="card-description">Access historical data logs and generate weekly performance summaries.</div>
+            </a>
+        </main>
+
+        <footer>
+            &copy; 2026 Aviation Ops Hub. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>
