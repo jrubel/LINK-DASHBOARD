@@ -374,15 +374,63 @@
         }
 
         /* Aircraft Animations */
+        /* Unified Tooltip System */
+        .tooltip-trigger {
+            position: relative;
+            cursor: help;
+        }
+
+        .mini-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: rgba(11, 30, 60, 0.95);
+            border: 1px solid var(--sky);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--white);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 1000;
+            text-align: center;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .tooltip-trigger:hover .mini-tooltip, .tooltip-trigger:focus-within .mini-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .mini-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--sky) transparent transparent transparent;
+        }
+
         .aircraft {
             position: fixed;
-            pointer-events: none;
+            pointer-events: auto;
             color: var(--sky);
             opacity: 0.4;
             z-index: 0;
             width: 38px;
             height: 38px;
             filter: drop-shadow(0 0 5px var(--sky));
+            cursor: pointer;
         }
 
         .aircraft-flyer {
@@ -557,12 +605,18 @@
     </div>
 
     <!-- Animated Aircraft -->
-    <svg class="aircraft aircraft-flyer" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-1.1.1-1.5.5l-.3.3c-.4.4-.5 1-.1 1.5L9 12l-1.5 1.5L4 13l-1 1 3 2 2 3 1-1-1.5-3.5L9 13l3.5 3.5 1.5 5.5c.5.4 1.1.3 1.5-.1l.3-.3c.4-.4.5-1.1.1-1.5z"/>
-    </svg>
-    <svg class="aircraft aircraft-lander" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M21,12L19,10L14,10L10,4H8L12,10H6L4,8H2V16H4L6,14H12L8,20H10L14,14L19,14L21,12Z"/>
-    </svg>
+    <div class="has-tooltip aircraft aircraft-flyer tooltip-trigger">
+        <div class="mini-tooltip">En-route Transit Flight</div>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+            <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-1.1.1-1.5.5l-.3.3c-.4.4-.5 1-.1 1.5L9 12l-1.5 1.5L4 13l-1 1 3 2 2 3 1-1-1.5-3.5L9 13l3.5 3.5 1.5 5.5c.5.4 1.1.3 1.5-.1l.3-.3c.4-.4.5-1.1.1-1.5z"/>
+        </svg>
+    </div>
+    <div class="has-tooltip aircraft aircraft-lander tooltip-trigger">
+        <div class="mini-tooltip">Landing Trajectory Simulation</div>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+            <path d="M21,12L19,10L14,10L10,4H8L12,10H6L4,8H2V16H4L6,14H12L8,20H10L14,14L19,14L21,12Z"/>
+        </svg>
+    </div>
 
     <div class="container">
         <header>
@@ -573,9 +627,12 @@
         <main class="grid">
             <a href="https://us-bangla.vercel.app/" target="_blank" rel="noopener noreferrer" class="card">
                 <div class="tooltip">Open Flight Dashboard <br> (Tracking live operations)</div>
-                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-1.1.1-1.5.5l-.3.3c-.4.4-.5 1-.1 1.5L9 12l-1.5 1.5L4 13l-1 1 3 2 2 3 1-1-1.5-3.5L9 13l3.5 3.5 1.5 5.5c.5.4 1.1.3 1.5-.1l.3-.3c.4-.4.5-1 .1-1.5z"/>
-                </svg>
+                <div class="tooltip-trigger">
+                    <div class="mini-tooltip">Fleet Monitoring Icon</div>
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-1.1.1-1.5.5l-.3.3c-.4.4-.5 1-.1 1.5L9 12l-1.5 1.5L4 13l-1 1 3 2 2 3 1-1-1.5-3.5L9 13l3.5 3.5 1.5 5.5c.5.4 1.1.3 1.5-.1l.3-.3c.4-.4.5-1 .1-1.5z"/>
+                    </svg>
+                </div>
                 <div class="card-title">Flight Dashboard</div>
                 <div class="card-description">Real-time tracking of active fleet operations and arrival schedules.</div>
                 <div class="status-indicators">
@@ -587,44 +644,56 @@
 
             <a href="https://kpi-eosin.vercel.app/" target="_blank" rel="noopener noreferrer" class="card">
                 <div class="tooltip">Staff Performance <br> (Efficiency & Rotations)</div>
-                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
+                <div class="tooltip-trigger">
+                    <div class="mini-tooltip">Personnel Data Icon</div>
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
                 <div class="card-title">Staff Performance Tracker</div>
                 <div class="card-description">Monitor efficiency metrics and crew assignment rotations across terminals.</div>
             </a>
 
             <a href="https://example.com/automation" target="_blank" rel="noopener noreferrer" class="card">
                 <div class="tooltip">Automation Panel <br> (Ground Handling)</div>
-                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                </svg>
+                <div class="tooltip-trigger">
+                    <div class="mini-tooltip">System Controls Icon</div>
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
                 <div class="card-title">Automation Panel</div>
                 <div class="card-description">Configure automated ground handling triggers and sensor notifications.</div>
             </a>
 
             <a href="https://example.com/reports" target="_blank" rel="noopener noreferrer" class="card">
                 <div class="tooltip">Reports System <br> (Data Logs & Summaries)</div>
-                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <line x1="10" y1="9" x2="8" y2="9"/>
-                </svg>
+                <div class="tooltip-trigger">
+                    <div class="mini-tooltip">Audit Logs Icon</div>
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <line x1="10" y1="9" x2="8" y2="9"/>
+                    </svg>
+                </div>
                 <div class="card-title">Reports System</div>
                 <div class="card-description">Access historical data logs and generate weekly performance summaries.</div>
             </a>
 
             <div class="card">
                 <div class="tooltip">Weather Forecast <br> (DAC Hub)</div>
-                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>
-                </svg>
+                <div class="tooltip-trigger">
+                    <div class="mini-tooltip">Meteorological Data Icon</div>
+                    <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>
+                    </svg>
+                </div>
                 <div class="card-title">Weather Forecast</div>
                 <div class="card-description">Critical meteorological conditions for major operational hubs.</div>
                 <div class="weather-grid">
@@ -636,9 +705,12 @@
                             </div>
                             <div class="hub-info">
                                 <span class="weather-desc">Scattered Clouds</span>
-                                <svg class="weather-icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>
-                                </svg>
+                                <div class="tooltip-trigger">
+                                    <div class="mini-tooltip">Current: Partly Cloudy</div>
+                                    <svg class="weather-icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
 
@@ -660,30 +732,42 @@
                         <div class="hourly-forecast">
                             <div class="hourly-item">
                                 <span class="hourly-time">14:00</span>
-                                <svg class="hourly-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
-                                </svg>
+                                <div class="tooltip-trigger">
+                                    <div class="mini-tooltip">Sky Condition: Clear</div>
+                                    <svg class="hourly-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                                    </svg>
+                                </div>
                                 <span class="hourly-temp">33°C</span>
                             </div>
                             <div class="hourly-item">
                                 <span class="hourly-time">15:00</span>
-                                <svg class="hourly-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>
-                                </svg>
+                                <div class="tooltip-trigger">
+                                    <div class="mini-tooltip">Sky Condition: Partly Cloudy</div>
+                                    <svg class="hourly-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>
+                                    </svg>
+                                </div>
                                 <span class="hourly-temp">31°C</span>
                             </div>
                             <div class="hourly-item">
                                 <span class="hourly-time">16:00</span>
-                                <svg class="hourly-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4"/><path d="M12 18v4"/><path d="M16 16v4"/>
-                                </svg>
+                                <div class="tooltip-trigger">
+                                    <div class="mini-tooltip">Sky Condition: High Overcast</div>
+                                    <svg class="hourly-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4"/><path d="M12 18v4"/><path d="M16 16v4"/>
+                                    </svg>
+                                </div>
                                 <span class="hourly-temp">29°C</span>
                             </div>
                             <div class="hourly-item">
                                 <span class="hourly-time">17:00</span>
-                                <svg class="hourly-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4"/><path d="M12 18v4"/><path d="M16 16v4"/>
-                                </svg>
+                                <div class="tooltip-trigger">
+                                    <div class="mini-tooltip">Sky Condition: Light Rain</div>
+                                    <svg class="hourly-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 16v4"/><path d="M12 18v4"/><path d="M16 16v4"/>
+                                    </svg>
+                                </div>
                                 <span class="hourly-temp">28°C</span>
                             </div>
                         </div>
